@@ -1,0 +1,98 @@
+// Code your design here
+
+module SPI_Master_Controller(
+    input clr,
+    input clock,
+    output mosi,
+    output sck,
+    output ss
+    );
+  
+  
+  wire [2:0] Address;
+  wire [7:0] data;
+  
+  
+CLOCK_DIVIDER clockdivider( 
+  
+       .clr                 (clr),
+       .clock               (clock),
+	   .clk                 (clk)
+ );
+
+ROM rommemory ( 
+  
+       .Address             (Address),
+       .data                (data)
+ );
+					  
+SPI_CONTROL spicontrol ( 
+  
+       .data                (data),
+       .clr                 (clr),
+       .clk                 (clk),
+	   .done                (done),
+	   .Address             (Address),
+       .start               (start)
+ );
+  
+  
+FSM_SPI fsmspi ( 
+       .data                (data),
+       .clr                 (clr),
+       .start               (start),
+	   .clk                 (clk),
+	   .done                (done),
+	   .mosi                (mosi),
+	   .sck                 (sck),
+	   .ss                  (ss)
+ );
+  
+endmodule
+
+TESTBENCH CODE
+// Code your testbench here
+// or browse Examples
+module TOP_SPI_MODULE_TB;
+
+	// Inputs
+	reg clr;
+	reg clock;
+
+	// Outputs
+	wire mosi;
+	wire sck;
+	wire ss;
+
+	// Instantiate the Unit Under Test (UUT)
+	TOP_SPI_MODULE uut (
+		
+      .clr               (clr), 
+	  .clock             (clock), 
+	  .mosi              (mosi), 
+	  .sck               (sck), 
+	  .ss                (ss)
+	);
+
+	initial begin
+		// Initialize Inputs
+		clr = 0;
+		clock = 0;
+
+		// Wait 100 ns for global reset to finish
+		
+        #5;
+		clr=1;
+				#5;
+		clr=0;
+		// Add stimulus here
+
+	end
+       always 
+#5 clock=!clock;
+//initial begin
+//     #5;
+//	    start=1;
+//		 data=8'b00101010;
+//		 end
+endmodule
